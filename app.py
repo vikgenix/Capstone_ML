@@ -49,12 +49,12 @@ with tabs[1]:
     col1, col2 = st.columns(2)
     with col1:
         smoking = st.selectbox("Smoking Status", ["Never Smoked", "Former Smoker", "Current Smoker"]) 
-        alcohol = st.number_input("Alcohol Consumption (units/week)", min_value=0.0, value=0.0)
+        alcohol = st.number_input("Alcohol Consumption (units/week)", min_value=0.0, value=0.0, step=1.0)
         physical_activity = st.number_input("Physical Activity (mins/week)", min_value=0, value=150)
     with col2:
         diet_score = st.slider("Diet Score (0-10)", 0, 10, 5)
-        sleep = st.number_input("Sleep Hours/Day", min_value=0.0, max_value=24.0, value=7.0)
-        screen_time = st.number_input("Screen Time Hours/Day", min_value=0.0, max_value=24.0, value=4.0)
+        sleep = st.number_input("Sleep Hours/Day", min_value=0.0, max_value=24.0, value=7.0, step=1.0)
+        screen_time = st.number_input("Screen Time Hours/Day", min_value=0.0, max_value=24.0, value=4.0, step=1.0)
 
 with tabs[2]:
     col1, col2, col3 = st.columns(3)
