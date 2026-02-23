@@ -19,15 +19,15 @@ with open("style.css") as f:
 def load_models():
     try:
         models = joblib.load("diabetes_prediction_models.pkl")
-        lr = models.get('linear_regressor')
-        dt = models.get('decision_tree_classifier')
+        lr = models.get('lr')
+        dt = models.get('dt')
         sc = models.get('scaler')
         return lr, dt, sc
     except Exception as e:
         st.error(f"Error loading models: {e}")
         return None, None, None
 
-lr_model, dt_model, scaler = load_models()
+lr, dt, scaler = load_models()
 
 st.markdown("<h1 class='main-title'>🩺 Diabetes Prediction & Risk Analysis</h1>", unsafe_allow_html=True)
 st.write("Enter your health metrics below to get a comprehensive risk assessment and diagnosis prediction.")
@@ -101,16 +101,16 @@ if st.button("Analyze Diabetes Risk"):
         st.warning("⚠️ Logic Error: Scaler not found in model file. Predictions may be inaccurate.")
         
     # Predict and Clip Risk Score to 0-100
-    raw_risk_score = lr_model.predict(input_data_lr_prepared)[0]
-    predicted_risk_score = np.clip(raw_risk_score, 0, 100)
+    raw_r = lr.predict(input_data_lr_prepared)[0]
+    pred_r = np.clip(raw_r, 0, 100)
     
     # Stage 2: Decision Tree for Diagnosis
-    # DT was trained on [Scaled Features + predicted_risk_score]
-    # We must append the predicted_risk_score to the already scaled inputs
-    input_data_dt = np.append(input_data_lr_prepared, [[predicted_risk_score]], axis=1)
+    # DT was trained on [Scaled Features + pred_r]
+    # We must append the pred_r to the already scaled inputs
+    input_data_dt = np.append(input_data_lr_prepared, [[pred_r]], axis=1)
     
-    prediction_prob = dt_model.predict_proba(input_data_dt)[0]
-    prediction = dt_model.predict(input_data_dt)[0]
+    prediction_prob = dt.predict_proba(input_data_dt)[0]
+    prediction = dt.predict(input_data_dt)[0]
     
     # Results Presentation
     st.markdown("---")
@@ -118,8 +118,8 @@ if st.button("Analyze Diabetes Risk"):
     
     with res_col1:
         st.subheader("Diabetes Risk Score")
-        risk_color = "green" if predicted_risk_score < 30 else "orange" if predicted_risk_score < 70 else "red"
-        st.markdown(f"<h2 style='color: {risk_color};'>{predicted_risk_score:.2f} / 100</h2>", unsafe_allow_html=True)
+        risk_color = "green" if pred_r < 30 else "orange" if pred_r < 70 else "red"
+        st.markdown(f"<h2 style='color: {risk_color};'>{pred_r:.2f} / 100</h2>", unsafe_allow_html=True)
         st.info("The risk score represents a continuous assessment of your diabetic predisposition based on your metabolic and lifestyle factors.")
 
     with res_col2:
