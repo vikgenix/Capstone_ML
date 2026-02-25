@@ -19,6 +19,9 @@ The workflow begins with raw data processing in a Jupyter Notebook, training opt
 * **Comprehensive Metrics:** Analyzes BMI, HbA1c, Glucose levels, Cholesterol, Sleep patterns, and Lifestyle choices.
 * **Visual Feedback:** Color-coded risk indicators and confidence percentages.
 
+## Confusion Matrix
+![alt text](confusion_matrix.png)
+
 ## Tech Stack
 
 * **Language:** Python 3.x
