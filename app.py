@@ -19,15 +19,26 @@ with open("style.css") as f:
 def load_models():
     try:
         models = joblib.load("diabetes_prediction_models.pkl")
-        lr = models.get('lr')
-        dt = models.get('dt')
-        sc = models.get('scaler')
-        return lr, dt, sc
+        linear_regressor = models.get('linear_regressor')
+        decision_tree_classifier = models.get('decision_tree_classifier')
+        scaler = models.get('scaler')
+        return linear_regressor, decision_tree_classifier, scaler
     except Exception as e:
         st.error(f"Error loading models: {e}")
         return None, None, None
 
-lr, dt, scaler = load_models()
+linear_regressor_model, decision_tree_model, scaler = load_models()
+
+# Feature names for models
+FEATURE_NAMES = [
+    'age', 'gender', 'smoking_status', 'alcohol_consumption_per_week', 
+    'physical_activity_minutes_per_week', 'diet_score', 'sleep_hours_per_day', 
+    'screen_time_hours_per_day', 'family_history_diabetes', 'hypertension_history', 
+    'cardiovascular_history', 'bmi', 'waist_to_hip_ratio', 'systolic_bp', 
+    'diastolic_bp', 'heart_rate', 'cholesterol_total', 'hdl_cholesterol', 
+    'ldl_cholesterol', 'triglycerides', 'glucose_fasting', 'glucose_postprandial', 
+    'insulin_level', 'hba1c'
+]
 
 st.markdown("<h1 class='main-title'>🩺 Diabetes Prediction & Risk Analysis</h1>", unsafe_allow_html=True)
 st.write("Enter your health metrics below to get a comprehensive risk assessment and diagnosis prediction.")
@@ -91,26 +102,24 @@ lr_inputs = [
 
 if st.button("Analyze Diabetes Risk"):
     # Stage 1: Linear Regression for Risk Score
-    input_data_lr = np.array([lr_inputs])
+    input_df_lr = pd.DataFrame([lr_inputs], columns=FEATURE_NAMES)
     
     # Handle scaling if scaler is available
     if scaler is not None:
-        input_data_lr_prepared = scaler.transform(input_data_lr)
+        input_data_lr_prepared = scaler.transform(input_df_lr)
     else:
-        input_data_lr_prepared = input_data_lr
-        st.warning("⚠️ Logic Error: Scaler not found in model file. Predictions may be inaccurate.")
-        
-    # Predict and Clip Risk Score to 0-100
-    raw_r = lr.predict(input_data_lr_prepared)[0]
-    pred_r = np.clip(raw_r, 0, 100)
+        input_data_lr_prepared = input_df_lr.values
     
-    # Stage 2: Decision Tree for Diagnosis
-    # DT was trained on [Scaled Features + pred_r]
-    # We must append the pred_r to the already scaled inputs
-    input_data_dt = np.append(input_data_lr_prepared, [[pred_r]], axis=1)
+    # Get raw risk score
+    raw_risk_score = linear_regressor_model.predict(input_data_lr_prepared)[0]
+    predicted_risk_score = np.clip(raw_risk_score, 0, 100)
     
-    prediction_prob = dt.predict_proba(input_data_dt)[0]
-    prediction = dt.predict(input_data_dt)[0]
+    # Stage 2: Decision Tree for Classification
+    input_df_dt = pd.DataFrame(input_data_lr_prepared, columns=FEATURE_NAMES)
+    input_df_dt['predicted_risk_score'] = predicted_risk_score
+    
+    prediction_prob = decision_tree_model.predict_proba(input_df_dt)[0]
+    prediction = decision_tree_model.predict(input_df_dt)[0]
     
     # Results Presentation
     st.markdown("---")
@@ -118,8 +127,8 @@ if st.button("Analyze Diabetes Risk"):
     
     with res_col1:
         st.subheader("Diabetes Risk Score")
-        risk_color = "green" if pred_r < 30 else "orange" if pred_r < 70 else "red"
-        st.markdown(f"<h2 style='color: {risk_color};'>{pred_r:.2f} / 100</h2>", unsafe_allow_html=True)
+        risk_color = "green" if predicted_risk_score < 30 else "orange" if predicted_risk_score < 70 else "red"
+        st.markdown(f"<h2 style='color: {risk_color};'>{predicted_risk_score:.2f} / 100</h2>", unsafe_allow_html=True)
         st.info("The risk score represents a continuous assessment of your diabetic predisposition based on your metabolic and lifestyle factors.")
 
     with res_col2:
