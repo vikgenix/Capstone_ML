@@ -3,3 +3,10 @@ joblib
 scikit-learn
 pandas
 numpy
+langgraph
+langchain
+langchain-core
+langchain-community
+langchain-groq
+chromadb
+sentence-transformers

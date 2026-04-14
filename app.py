@@ -2,6 +2,15 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
+import os
+import sys
+
+# Always resolve paths relative to this script's file location
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Ensure the project folder is on the import path (so agent.py is always found)
+if _BASE_DIR not in sys.path:
+    sys.path.insert(0, _BASE_DIR)
 
 # Page config
 st.set_page_config(
@@ -11,14 +20,39 @@ st.set_page_config(
 )
 
 # Load CSS
-with open("style.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+_css_path = os.path.join(_BASE_DIR, "style.css")
+if os.path.exists(_css_path):
+    with open(_css_path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Load Models
+# ── Groq API Key (from env or sidebar) ──────────────────────────────────────
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+
+with st.sidebar:
+    st.markdown("## ⚙️ Configuration")
+    groq_key_input = st.text_input(
+        "Groq API Key",
+        value=GROQ_API_KEY,
+        type="password",
+        help="Enter your Groq API key. Get one free at console.groq.com"
+    )
+    if groq_key_input:
+        GROQ_API_KEY = groq_key_input
+
+    st.markdown("---")
+    st.markdown("### 📖 About")
+    st.info(
+        "This tool uses a two-stage ML pipeline (Linear Regression + Decision Tree) "
+        "for risk scoring, then an **Agentic AI** (LangGraph + Groq LLaMA3) with "
+        "RAG over medical guidelines to generate a personalized health report."
+    )
+    st.warning("⚕️ For educational purposes only. Not medical advice.")
+
+# ── Load ML Models ────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_models():
     try:
-        models = joblib.load("diabetes_prediction_models.pkl")
+        models = joblib.load(os.path.join(_BASE_DIR, "diabetes_prediction_models.pkl"))
         linear_regressor = models.get('linear_regressor')
         decision_tree_classifier = models.get('decision_tree_classifier')
         scaler = models.get('scaler')
@@ -29,28 +63,28 @@ def load_models():
 
 linear_regressor_model, decision_tree_model, scaler = load_models()
 
-# Feature names for models
 FEATURE_NAMES = [
-    'age', 'gender', 'smoking_status', 'alcohol_consumption_per_week', 
-    'physical_activity_minutes_per_week', 'diet_score', 'sleep_hours_per_day', 
-    'screen_time_hours_per_day', 'family_history_diabetes', 'hypertension_history', 
-    'cardiovascular_history', 'bmi', 'waist_to_hip_ratio', 'systolic_bp', 
-    'diastolic_bp', 'heart_rate', 'cholesterol_total', 'hdl_cholesterol', 
-    'ldl_cholesterol', 'triglycerides', 'glucose_fasting', 'glucose_postprandial', 
+    'age', 'gender', 'smoking_status', 'alcohol_consumption_per_week',
+    'physical_activity_minutes_per_week', 'diet_score', 'sleep_hours_per_day',
+    'screen_time_hours_per_day', 'family_history_diabetes', 'hypertension_history',
+    'cardiovascular_history', 'bmi', 'waist_to_hip_ratio', 'systolic_bp',
+    'diastolic_bp', 'heart_rate', 'cholesterol_total', 'hdl_cholesterol',
+    'ldl_cholesterol', 'triglycerides', 'glucose_fasting', 'glucose_postprandial',
     'insulin_level', 'hba1c'
 ]
 
+# ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("<h1 class='main-title'>🩺 Diabetes Prediction & Risk Analysis</h1>", unsafe_allow_html=True)
-st.write("Enter your health metrics below to get a comprehensive risk assessment and diagnosis prediction.")
+st.write("Enter your health metrics below to get a comprehensive risk assessment and an AI-powered health guidance report.")
 
-# Input Layout
+# ── Input Layout ──────────────────────────────────────────────────────────────
 tabs = st.tabs(["👤 Demographics", "🏃 Lifestyle", "🩸 Clinical Metrics"])
 
 with tabs[0]:
     col1, col2 = st.columns(2)
     with col1:
         age = st.number_input("Age", min_value=0, max_value=120, value=30)
-        gender = st.selectbox("Gender", ["Female", "Male"]) # Female=0, Male=1 usually
+        gender = st.selectbox("Gender", ["Female", "Male"])
     with col2:
         family_history = st.selectbox("Family History of Diabetes", ["No", "Yes"])
         hypertension = st.selectbox("History of Hypertension", ["No", "Yes"])
@@ -59,7 +93,7 @@ with tabs[0]:
 with tabs[1]:
     col1, col2 = st.columns(2)
     with col1:
-        smoking = st.selectbox("Smoking Status", ["Never Smoked", "Former Smoker", "Current Smoker"]) 
+        smoking = st.selectbox("Smoking Status", ["Never Smoked", "Former Smoker", "Current Smoker"])
         alcohol = st.number_input("Alcohol Consumption (units/week)", min_value=0.0, value=0.0, step=1.0)
         physical_activity = st.number_input("Physical Activity (mins/week)", min_value=0, value=150)
     with col2:
@@ -86,12 +120,11 @@ with tabs[2]:
         insulin = st.number_input("Insulin Level", min_value=1, value=15)
         hba1c = st.number_input("HbA1c (%)", min_value=3.0, max_value=15.0, value=5.5)
 
-# Mapping Categorical Inputs
-gender_map = {"Female": 0, "Male": 1}
-yes_no_map = {"No": 0, "Yes": 1}
-smoking_map = {"Never Smoked": 0, "Former Smoker": 1, "Current Smoker": 2}
+# ── Mappings ──────────────────────────────────────────────────────────────────
+gender_map    = {"Female": 0, "Male": 1}
+yes_no_map    = {"No": 0, "Yes": 1}
+smoking_map   = {"Never Smoked": 0, "Former Smoker": 1, "Current Smoker": 2}
 
-# Prepare LR inputs (24 features)
 lr_inputs = [
     age, gender_map[gender], smoking_map[smoking], alcohol, physical_activity,
     diet_score, sleep, screen_time, yes_no_map[family_history], yes_no_map[hypertension],
@@ -100,46 +133,104 @@ lr_inputs = [
     insulin, hba1c
 ]
 
-if st.button("Analyze Diabetes Risk"):
-    # Stage 1: Linear Regression for Risk Score
+# ── Analyze Button ────────────────────────────────────────────────────────────
+if st.button("🔬 Analyze Diabetes Risk", use_container_width=True):
+
+    # ── Stage 1: ML Risk Scoring ──────────────────────────────────────────────
     input_df_lr = pd.DataFrame([lr_inputs], columns=FEATURE_NAMES)
-    
-    # Handle scaling if scaler is available
+
     if scaler is not None:
         input_data_lr_prepared = scaler.transform(input_df_lr)
     else:
         input_data_lr_prepared = input_df_lr.values
-    
-    # Get raw risk score
+
     raw_risk_score = linear_regressor_model.predict(input_data_lr_prepared)[0]
-    predicted_risk_score = np.clip(raw_risk_score, 0, 100)
-    
-    # Stage 2: Decision Tree for Classification
+    predicted_risk_score = float(np.clip(raw_risk_score, 0, 100))
+
     input_df_dt = pd.DataFrame(input_data_lr_prepared, columns=FEATURE_NAMES)
     input_df_dt['predicted_risk_score'] = predicted_risk_score
-    
+
     prediction_prob = decision_tree_model.predict_proba(input_df_dt)[0]
     prediction = decision_tree_model.predict(input_df_dt)[0]
-    
-    # Results Presentation
+
+    prediction_label = "Diabetic" if prediction == 1 else "Non-Diabetic"
+    prediction_confidence = float(prediction_prob[1] * 100 if prediction == 1 else prediction_prob[0] * 100)
+
+    # ── ML Results ───────────────────────────────────────────────────────────
     st.markdown("---")
+    st.markdown("## 📊 ML Risk Assessment Results")
     res_col1, res_col2 = st.columns(2)
-    
+
     with res_col1:
         st.subheader("Diabetes Risk Score")
         risk_color = "green" if predicted_risk_score < 30 else "orange" if predicted_risk_score < 70 else "red"
-        st.markdown(f"<h2 style='color: {risk_color};'>{predicted_risk_score:.2f} / 100</h2>", unsafe_allow_html=True)
-        st.info("The risk score represents a continuous assessment of your diabetic predisposition based on your metabolic and lifestyle factors.")
+        st.markdown(
+            f"<h2 style='color: {risk_color};'>{predicted_risk_score:.2f} / 100</h2>",
+            unsafe_allow_html=True
+        )
+        # Risk gauge bar
+        st.progress(int(predicted_risk_score))
+        st.info("The risk score represents a continuous assessment of your diabetic predisposition.")
 
     with res_col2:
         st.subheader("Diabetes Diagnosis Prediction")
         if prediction == 1:
-            st.error("Prediction: DIABETIC DETECTED")
-            st.write(f"Confidence: {prediction_prob[1]*100:.1f}%")
+            st.error(f"🔴 Prediction: **DIABETIC DETECTED**")
+            st.write(f"Confidence: **{prediction_confidence:.1f}%**")
         else:
-            st.success("Prediction: NO DIABETES DETECTED")
-            st.write(f"Confidence: {prediction_prob[0]*100:.1f}%")
-        st.warning("Disclaimer: This tool is for educational purposes and should not be used as clinical advice. Always consult a healthcare professional.")
+            st.success(f"🟢 Prediction: **NO DIABETES DETECTED**")
+            st.write(f"Confidence: **{prediction_confidence:.1f}%**")
+
+    # ── Stage 2: Agentic AI Report ────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("## 🤖 Agentic AI Health Report")
+
+    if not GROQ_API_KEY or GROQ_API_KEY == "your-groq-key-here":
+        st.error("❌ Please enter a valid Groq API key in the sidebar to generate the AI health report.")
+    else:
+        # Build patient summary for the agent
+        patient_summary = (
+            f"Age: {age}, Gender: {gender}, BMI: {bmi:.1f}, "
+            f"Waist-Hip Ratio: {waist_hip:.2f}, "
+            f"Smoking: {smoking}, Alcohol: {alcohol} units/week, "
+            f"Physical Activity: {physical_activity} mins/week, "
+            f"Diet Score: {diet_score}/10, Sleep: {sleep} hrs/day, "
+            f"Family History: {family_history}, Hypertension: {hypertension}, "
+            f"Cardiovascular History: {cardio_history}, "
+            f"Fasting Glucose: {fasting_glucose} mg/dL, HbA1c: {hba1c}%, "
+            f"Systolic BP: {sys_bp} mmHg, Diastolic BP: {dia_bp} mmHg, "
+            f"Cholesterol: {chol_total} mg/dL (LDL:{ldl}, HDL:{hdl}), "
+            f"Triglycerides: {triglycerides} mg/dL."
+        )
+
+        # Check if ChromaDB exists (use absolute path)
+        chroma_ready = os.path.exists(os.path.join(_BASE_DIR, "chroma_db"))
+
+        if not chroma_ready:
+            st.warning(
+                "⚠️ Vector database not found. Please run `python ingest.py` first to build it. "
+                "Proceeding with agent using general knowledge only."
+            )
+
+        with st.spinner("🧠 Agent is analyzing your data and retrieving medical guidelines..."):
+            try:
+                from agent import run_agent
+                health_report = run_agent(
+                    patient_summary=patient_summary,
+                    risk_score=predicted_risk_score,
+                    prediction_label=prediction_label,
+                    prediction_confidence=prediction_confidence,
+                    groq_api_key=GROQ_API_KEY
+                )
+                st.markdown(health_report)
+            except ImportError as ie:
+                st.error(
+                    f"❌ Agent dependencies not installed. Run:\n"
+                    f"```\npip install langgraph langchain langchain-groq "
+                    f"langchain-community chromadb sentence-transformers\n```\nError: {ie}"
+                )
+            except Exception as e:
+                st.error(f"❌ Agent encountered an error: {str(e)}")
 
 st.markdown("---")
-st.caption("Powered by optimized Linear Regression and Decision Tree models.")
+st.caption("Powered by ML (Linear Regression + Decision Tree) & Agentic AI (LangGraph + Groq LLaMA3 + ChromaDB RAG)")

@@ -1,0 +1,204 @@
+== SECTION: Diabetes Overview ==
+Diabetes mellitus is a chronic metabolic disease characterized by elevated blood glucose (hyperglycemia). There are two main types: Type 1 diabetes (autoimmune, insulin-dependent) and Type 2 diabetes (insulin resistance, lifestyle-related). Prediabetes is a condition where blood glucose is higher than normal but not high enough to be classified as Type 2 diabetes. Early detection and intervention are critical.
+
+Source: American Diabetes Association (ADA), Standards of Medical Care in Diabetes, 2023.
+
+== SECTION: Diagnostic Criteria ==
+The following values, confirmed on two separate tests, indicate diabetes:
+- Fasting Plasma Glucose (FPG) >= 126 mg/dL (7.0 mmol/L)
+- 2-hour Plasma Glucose >= 200 mg/dL (11.1 mmol/L) during Oral Glucose Tolerance Test (OGTT)
+- HbA1c >= 6.5% (48 mmol/mol)
+- Random Plasma Glucose >= 200 mg/dL in a patient with classic symptoms of hyperglycemia
+
+Prediabetes criteria:
+- FPG 100–125 mg/dL (Impaired Fasting Glucose)
+- 2-hour PG 140–199 mg/dL during OGTT (Impaired Glucose Tolerance)
+- HbA1c 5.7–6.4%
+
+Source: WHO, 2006. Definition and Diagnosis of Diabetes Mellitus and Intermediate Hyperglycemia.
+
+== SECTION: Risk Factors for Type 2 Diabetes ==
+Major risk factors include:
+- Overweight (BMI >= 25 kg/m²) or Obesity (BMI >= 30 kg/m²)
+- Physical inactivity (less than 150 minutes/week of moderate activity)
+- Family history of diabetes in a first-degree relative
+- Hypertension (blood pressure >= 140/90 mmHg)
+- Dyslipidemia: HDL cholesterol < 35 mg/dL or triglycerides > 250 mg/dL
+- History of cardiovascular disease
+- History of gestational diabetes or delivery of a baby over 9 lbs
+- Impaired fasting glucose or impaired glucose tolerance previously identified
+- Age >= 45 years (risk increases substantially)
+- Waist circumference > 40 inches (men) or >35 inches (women) indicating central obesity
+- High alcohol consumption (> 14 units/week for men, > 7 units/week for women)
+- Smoking: increases insulin resistance and risk by approximately 30–40%
+
+Source: CDC, National Diabetes Prevention Program. ADA 2023.
+
+== SECTION: Prevention Strategies ==
+Lifestyle interventions can reduce the risk of Type 2 Diabetes by up to 58%:
+1. Achieve and maintain a healthy body weight. Even a 5–7% reduction in body weight is proven to have a significant impact.
+2. Engage in at least 150 minutes of moderate-intensity aerobic activity per week (e.g., brisk walking, cycling).
+3. Include resistance training (e.g., weightlifting, bodyweight exercises) at least 2–3 times per week.
+4. Follow a balanced diet: rich in vegetables, fruits, whole grains, lean proteins, and healthy fats. Minimize intake of processed foods, refined carbohydrates, and sugary beverages.
+5. Quit smoking. Smoking cessation immediately begins to lower the risk of diabetes and cardiovascular disease.
+6. Limit alcohol consumption. Moderate drinking (up to 1 drink/day for women, 2 for men) is acceptable. Excessive use is strongly discouraged.
+7. Ensure 7–9 hours of quality sleep per night. Poor sleep is associated with insulin resistance.
+8. Manage stress effectively. Chronic stress elevates cortisol levels, contributing to blood sugar instability.
+
+Source: CDC Diabetes Prevention Program. Knowler WC et al., NEJM 2002.
+
+== SECTION: Dietary Guidelines ==
+Recommended dietary patterns for diabetes prevention and management:
+- The Mediterranean Diet: High in fish, olive oil, vegetables, legumes, and whole grains. Associated with reduced cardiovascular risk and improved glycemic control.
+- The DASH Diet (Dietary Approaches to Stop Hypertension): Reduces blood pressure and blood glucose.
+- Low Glycemic Index (GI) diet: Focuses on foods that cause gradual rather than rapid rises in blood sugar (e.g., oats, lentils, most vegetables).
+
+Foods to prioritize:
+- Non-starchy vegetables (broccoli, spinach, peppers)
+- Whole grains (brown rice, quinoa, whole wheat bread)
+- Legumes (beans, lentils, chickpeas)
+- Lean proteins (chicken, fish, tofu)
+- Healthy fats (avocado, nuts, olive oil)
+
+Foods to limit:
+- Refined carbohydrates and white bread
+- Sugary drinks (sodas, fruit juices)
+- Processed meats (sausages, bacon)
+- Saturated and trans fats
+- High-sodium foods
+
+Source: ADA Nutrition Consensus Report, Diabetes Care, 2019.
+
+== SECTION: Physical Activity Recommendations ==
+The American Diabetes Association recommends:
+- At least 150 minutes/week of moderate-intensity aerobic exercise.
+- No more than 2 consecutive days without exercise.
+- Resistance training at least 2 days per week.
+- Reduce prolonged sitting. Break up sedentary time every 30 minutes with light activity.
+- For people with prediabetes: physical activity is a first-line treatment recommendation.
+
+Benefits of exercise in diabetes management:
+- Improves insulin sensitivity
+- Lowers blood glucose levels
+- Reduces body weight
+- Improves cardiovascular health
+- Lowers HbA1c by approximately 0.5–1.0%
+
+Source: ADA Standards of Medical Care in Diabetes, 2023.
+
+== SECTION: Hypertension and Diabetes ==
+Hypertension is present in approximately 70% of people with Type 2 diabetes. Combined hypertension and diabetes significantly increases the risk of cardiovascular disease, stroke, kidney failure, and retinopathy.
+
+Blood pressure targets for adults with diabetes:
+- General target: < 130/80 mmHg
+- For patients with high CV risk: < 120/80 mmHg may be appropriate
+
+Lifestyle modifications to reduce blood pressure:
+- DASH diet adherence
+- Weight reduction
+- Reduced sodium intake (< 2,300 mg/day)
+- Regular aerobic exercise
+- Limiting alcohol intake
+- Smoking cessation
+
+Pharmacological treatment: ACE inhibitors and ARBs are preferred as first-line agents in people with diabetes and hypertension.
+
+Source: ADA 2023; JNC 8 Guidelines.
+
+== SECTION: Cholesterol Management in Diabetes ==
+Dyslipidemia is common in Type 2 diabetes. The typical pattern is elevated triglycerides, low HDL cholesterol, and small, dense LDL particles, which are highly atherogenic.
+
+Target lipid values for diabetic patients:
+- LDL Cholesterol: < 100 mg/dL (< 70 mg/dL for high cardiovascular risk)
+- HDL Cholesterol: > 40 mg/dL (men), > 50 mg/dL (women)
+- Triglycerides: < 150 mg/dL
+
+Statin therapy is recommended for all patients with diabetes aged 40–75 years, regardless of baseline LDL, due to elevated cardiovascular risk.
+
+Source: ADA 2023; American Heart Association.
+
+== SECTION: BMI and Weight Management ==
+BMI Classification:
+- Underweight: < 18.5 kg/m²
+- Normal weight: 18.5–24.9 kg/m²
+- Overweight: 25.0–29.9 kg/m²
+- Obese Class I: 30.0–34.9 kg/m²
+- Obese Class II: 35.0–39.9 kg/m²
+- Obese Class III (Severe): >= 40 kg/m²
+
+A BMI >= 25 significantly increases the risk of Type 2 diabetes. Central obesity (measured by waist circumference or waist-to-hip ratio) is a strong independent risk factor.
+Waist-to-hip ratio thresholds for increased risk:
+- Men: >= 0.90
+- Women: >= 0.85
+
+Weight loss of 5–10% of body weight can significantly improve blood glucose control and reduce cardiovascular risk factors.
+
+Source: WHO Obesity guidelines; ADA 2023.
+
+== SECTION: HbA1c Targets and Monitoring ==
+HbA1c (glycated hemoglobin) reflects average blood glucose over the past 2–3 months. It is the primary metric for assessing long-term glycemic control.
+
+HbA1c targets:
+- Non-diabetic (normal): < 5.7%
+- Prediabetes: 5.7–6.4%
+- Diabetic (general target): < 7.0%
+- Diabetic (less stringent, e.g., older adults, comorbidities): < 8.0%
+
+Fasting blood glucose targets:
+- Non-diabetic: 70–99 mg/dL
+- Diabetic (pre-meal): 80–130 mg/dL
+- Diabetic (2 hours after meals): < 180 mg/dL
+
+Regular monitoring of HbA1c is recommended every 3 months until target is achieved, then every 6 months.
+
+Source: ADA Standards of Medical Care in Diabetes, 2023.
+
+== SECTION: When to Seek Medical Attention ==
+Patients should consult a healthcare provider immediately if they experience:
+- Fasting blood glucose consistently above 200 mg/dL
+- Symptoms of hyperglycemia: excessive thirst, frequent urination, unexplained weight loss, fatigue, blurred vision
+- Symptoms of hypoglycemia: shaking, sweating, confusion, rapid heartbeat
+- HbA1c above 9%
+- Signs of diabetic ketoacidosis (DKA): nausea, vomiting, abdominal pain, fruity breath
+- Severe chest pain, shortness of breath, or stroke symptoms
+
+Follow-up schedule for diabetic patients:
+- Medical visit: every 3–6 months
+- HbA1c: every 3–6 months
+- Blood pressure monitoring: every visit
+- Full lipid panel: annually
+- Foot examination: annually
+- Eye examination: annually
+- Kidney function tests (eGFR, urine albumin): annually
+
+Source: ADA Standards of Medical Care in Diabetes, 2023; CDC Diabetes Management Guidelines.
+
+== SECTION: Smoking and Diabetes ==
+Smoking is an independent risk factor for Type 2 diabetes. Current smokers have a 30–40% higher risk of developing Type 2 diabetes compared to non-smokers. Nicotine increases insulin resistance and promotes central fat accumulation.
+
+For people with diabetes, smoking increases the risk of:
+- Cardiovascular disease
+- Kidney disease
+- Poor glycemic control
+- Peripheral artery disease and amputations
+
+Cessation recommendations:
+- Counseling combined with pharmacotherapy (varenicline, bupropion, or nicotine replacement) is the most effective approach.
+- Even former smokers' risk is substantially reduced within 5 years of quitting.
+
+Source: CDC Smoking and Diabetes Factsheet; ADA 2023.
+
+== SECTION: Sleep and Metabolic Health ==
+Sleep deprivation (< 6 hours/night) and poor sleep quality are strongly associated with:
+- Insulin resistance
+- Elevated cortisol and inflammatory markers
+- Increased appetite and weight gain (due to dysregulation of ghrelin and leptin)
+- Higher risk of Type 2 diabetes
+
+Recommended sleep duration:
+- Adults: 7–9 hours per night (CDC/AASM guidelines)
+- Consistent sleep and wake times improve metabolic outcomes.
+
+Obstructive Sleep Apnea (OSA) is common in Type 2 diabetes and worsens glycemic control. Screening for OSA is recommended in overweight diabetic patients.
+
+Source: CDC Sleep Guidelines; Knutson et al., AASM 2017.
