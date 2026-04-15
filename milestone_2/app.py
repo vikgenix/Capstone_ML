@@ -4,9 +4,13 @@ import numpy as np
 import pandas as pd
 import os
 import sys
+from dotenv import load_dotenv
 
 # Always resolve paths relative to this script's file location
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Load .env file (gitignored) for local API keys
+load_dotenv(os.path.join(_BASE_DIR, "..", ".env"))
 
 # Ensure the project folder is on the import path (so agent.py is always found)
 if _BASE_DIR not in sys.path:
@@ -52,7 +56,7 @@ with st.sidebar:
 @st.cache_resource
 def load_models():
     try:
-        models = joblib.load(os.path.join(_BASE_DIR, "diabetes_prediction_models.pkl"))
+        models = joblib.load(os.path.join(_BASE_DIR, "..", "models", "diabetes_prediction_models.pkl"))
         linear_regressor = models.get('linear_regressor')
         decision_tree_classifier = models.get('decision_tree_classifier')
         scaler = models.get('scaler')

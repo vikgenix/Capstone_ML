@@ -11,7 +11,7 @@ from langchain_community.vectorstores import Chroma
 
 # Always resolve paths relative to this script's location
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-GUIDELINES_PATH = os.path.join(BASE_DIR, "guidelines.txt")
+GUIDELINES_PATH = os.path.join(BASE_DIR, "knowledge", "guidelines.txt")
 CHROMA_DB_PATH = os.path.join(BASE_DIR, "chroma_db")
 
 def build_vector_store():

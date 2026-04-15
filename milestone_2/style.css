@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@500;700&display=swap');
+
+/* Streamlit Global Styles */
+.main {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, .stMetricValue {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Glassmorphism Sidebar */
+[data-testid="stSidebar"] {
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Header Styling */
+.main-title {
+    color: #1e3a8a;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Card-like Tabs Container */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 12px 12px 0px 0px;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    box-shadow: 0 -4px 10px rgba(59, 130, 246, 0.2);
+}
+
+/* Custom Metric Styling */
+[data-testid="stMetricValue"] {
+    font-size: 3rem !important;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* Buttons */
+.stButton>button {
+    width: 100%;
+    border-radius: 14px;
+    padding: 1rem;
+    background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+    color: white;
+    font-weight: 700;
+    border: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+.stButton>button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 20px rgba(37, 99, 235, 0.4);
+    color: white;
+}
+
+/* Result Area */
+.stAlert {
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(5px);
+}
