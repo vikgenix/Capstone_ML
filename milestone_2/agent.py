@@ -113,3 +113,61 @@ def run_agent(
     }
     final_state = health_agent.invoke(initial_state)
     return final_state.get("health_report", "Report generation failed.")
+
+# === Chat API ===
+CHAT_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", """You are a knowledgeable and empathetic AI health support assistant.
+CRITICAL RULES:
+1. Only make claims that are supported by the provided guidelines.
+2. Answer the user's question directly based on their health context and retrieved guidelines.
+3. Be concise and clear.
+4. Always recommend consulting a healthcare professional for specific medical decisions.
+5. STRICT GUARDRAIL: You are strictly a Diabetes and Health Assistant. If the user asks ANY question outside of health, diabetes, wellness, or the provided report (such as writing code, math, history, or unrelated topics), you MUST refuse to answer and say: "I am a specialized health assistant. I can only answer questions related to your diabetes risk assessment and health guidelines." Do not attempt to fulfill non-medical requests under any circumstances."""),
+    ("human", """
+## Patient Context
+- **Risk Score**: {risk_score:.1f} / 100
+- **Patient Profile**: {patient_summary}
+
+## Retrieved Medical Guidelines 
+{guidelines_text}
+
+## Chat History
+{chat_history}
+
+## User Question
+{user_question}
+""")
+])
+
+def run_chat(
+    user_question: str,
+    chat_history: str,
+    patient_summary: str,
+    risk_score: float,
+    prediction_label: str,
+    groq_api_key: str
+) -> str:
+    """
+    Public interface to handle conversational follow-ups.
+    """
+    try:
+        # Retrieve context for new question
+        embeddings = HuggingFaceEmbeddings(model_name=EMBED_MODEL)
+        vectorstore = Chroma(persist_directory=CHROMA_DB_PATH, embedding_function=embeddings)
+        results = vectorstore.similarity_search(user_question, k=3)
+        guidelines_text = "\n\n---\n\n".join([doc.page_content for doc in results]) if results else "No specific guidelines retrieved."
+
+        # Generate response
+        llm = ChatGroq(model=LLM_MODEL, temperature=0.3, groq_api_key=groq_api_key)
+        chain = CHAT_PROMPT | llm
+        
+        response = chain.invoke({
+            "risk_score": risk_score,
+            "patient_summary": patient_summary,
+            "guidelines_text": guidelines_text,
+            "chat_history": chat_history,
+            "user_question": user_question,
+        })
+        return response.content
+    except Exception as e:
+        return f"⚠️ **Chat Error**: {str(e)}"

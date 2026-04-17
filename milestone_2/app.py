@@ -137,6 +137,10 @@ lr_inputs = [
     insulin, hba1c
 ]
 
+# ── Session State Initialization ──────────────────────────────────────────────
+if "analysis_complete" not in st.session_state:
+    st.session_state.analysis_complete = False
+
 # ── Analyze Button ────────────────────────────────────────────────────────────
 if st.button("🔬 Analyze Diabetes Risk", use_container_width=True):
 
@@ -160,6 +164,65 @@ if st.button("🔬 Analyze Diabetes Risk", use_container_width=True):
     prediction_label = "Diabetic" if prediction == 1 else "Non-Diabetic"
     prediction_confidence = float(prediction_prob[1] * 100 if prediction == 1 else prediction_prob[0] * 100)
 
+    # Cache Patient Summary
+    patient_summary = (
+        f"Age: {age}, Gender: {gender}, BMI: {bmi:.1f}, "
+        f"Waist-Hip Ratio: {waist_hip:.2f}, "
+        f"Smoking: {smoking}, Alcohol: {alcohol} units/week, "
+        f"Physical Activity: {physical_activity} mins/week, "
+        f"Diet Score: {diet_score}/10, Sleep: {sleep} hrs/day, "
+        f"Family History: {family_history}, Hypertension: {hypertension}, "
+        f"Cardiovascular History: {cardio_history}, "
+        f"Fasting Glucose: {fasting_glucose} mg/dL, HbA1c: {hba1c}%, "
+        f"Systolic BP: {sys_bp} mmHg, Diastolic BP: {dia_bp} mmHg, "
+        f"Cholesterol: {chol_total} mg/dL (LDL:{ldl}, HDL:{hdl}), "
+        f"Triglycerides: {triglycerides} mg/dL."
+    )
+
+    # Run initial Agent
+    health_report = ""
+    chroma_ready = os.path.exists(os.path.join(_BASE_DIR, "chroma_db"))
+
+    if not GROQ_API_KEY or GROQ_API_KEY == "your-groq-key-here":
+        health_report = "❌ **Error**: Please enter a valid Groq API key in the sidebar to generate the AI health report."
+    else:
+        if not chroma_ready:
+            st.warning("⚠️ Vector database not found. Proceeding with agent using general knowledge.")
+            
+        with st.spinner("🧠 Agent is analyzing your data and retrieving medical guidelines..."):
+            try:
+                from agent import run_agent
+                health_report = run_agent(
+                    patient_summary=patient_summary,
+                    risk_score=predicted_risk_score,
+                    prediction_label=prediction_label,
+                    prediction_confidence=prediction_confidence,
+                    groq_api_key=GROQ_API_KEY
+                )
+            except Exception as e:
+                health_report = f"❌ Agent encountered an error: {str(e)}"
+    
+    # Save everything to Session State
+    st.session_state.analysis_complete = True
+    st.session_state.predicted_risk_score = predicted_risk_score
+    st.session_state.prediction = prediction
+    st.session_state.prediction_label = prediction_label
+    st.session_state.prediction_confidence = prediction_confidence
+    st.session_state.patient_summary = patient_summary
+    st.session_state.health_report = health_report
+    st.session_state.messages = [] # Reset chat
+
+
+# ── Render Display if Analysis is Complete ──────────────────────────────────
+if st.session_state.analysis_complete:
+
+    predicted_risk_score = st.session_state.predicted_risk_score
+    prediction = st.session_state.prediction
+    prediction_confidence = st.session_state.prediction_confidence
+    prediction_label = st.session_state.prediction_label
+    patient_summary = st.session_state.patient_summary
+    health_report = st.session_state.health_report
+
     # ── ML Results ───────────────────────────────────────────────────────────
     st.markdown("---")
     st.markdown("## 📊 ML Risk Assessment Results")
@@ -172,7 +235,6 @@ if st.button("🔬 Analyze Diabetes Risk", use_container_width=True):
             f"<h2 style='color: {risk_color};'>{predicted_risk_score:.2f} / 100</h2>",
             unsafe_allow_html=True
         )
-        # Risk gauge bar
         st.progress(int(predicted_risk_score))
         st.info("The risk score represents a continuous assessment of your diabetic predisposition.")
 
@@ -188,53 +250,50 @@ if st.button("🔬 Analyze Diabetes Risk", use_container_width=True):
     # ── Stage 2: Agentic AI Report ────────────────────────────────────────────
     st.markdown("---")
     st.markdown("## 🤖 Agentic AI Health Report")
-
-    if not GROQ_API_KEY or GROQ_API_KEY == "your-groq-key-here":
-        st.error("❌ Please enter a valid Groq API key in the sidebar to generate the AI health report.")
+    if health_report.startswith("❌"):
+        st.error(health_report)
     else:
-        # Build patient summary for the agent
-        patient_summary = (
-            f"Age: {age}, Gender: {gender}, BMI: {bmi:.1f}, "
-            f"Waist-Hip Ratio: {waist_hip:.2f}, "
-            f"Smoking: {smoking}, Alcohol: {alcohol} units/week, "
-            f"Physical Activity: {physical_activity} mins/week, "
-            f"Diet Score: {diet_score}/10, Sleep: {sleep} hrs/day, "
-            f"Family History: {family_history}, Hypertension: {hypertension}, "
-            f"Cardiovascular History: {cardio_history}, "
-            f"Fasting Glucose: {fasting_glucose} mg/dL, HbA1c: {hba1c}%, "
-            f"Systolic BP: {sys_bp} mmHg, Diastolic BP: {dia_bp} mmHg, "
-            f"Cholesterol: {chol_total} mg/dL (LDL:{ldl}, HDL:{hdl}), "
-            f"Triglycerides: {triglycerides} mg/dL."
-        )
+        st.markdown(health_report)
 
-        # Check if ChromaDB exists (use absolute path)
-        chroma_ready = os.path.exists(os.path.join(_BASE_DIR, "chroma_db"))
+    # ── Stage 3: Conversational Mode ──────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("## 💬 Consult AI Assistant")
+    st.write("Do you have follow-up questions about this report or your risk analysis? Ask below!")
 
-        if not chroma_ready:
-            st.warning(
-                "⚠️ Vector database not found. Please run `python ingest.py` first to build it. "
-                "Proceeding with agent using general knowledge only."
-            )
+    # Display chat messages
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-        with st.spinner("🧠 Agent is analyzing your data and retrieving medical guidelines..."):
-            try:
-                from agent import run_agent
-                health_report = run_agent(
-                    patient_summary=patient_summary,
-                    risk_score=predicted_risk_score,
-                    prediction_label=prediction_label,
-                    prediction_confidence=prediction_confidence,
-                    groq_api_key=GROQ_API_KEY
-                )
-                st.markdown(health_report)
-            except ImportError as ie:
-                st.error(
-                    f"❌ Agent dependencies not installed. Run:\n"
-                    f"```\npip install langgraph langchain langchain-groq "
-                    f"langchain-community chromadb sentence-transformers\n```\nError: {ie}"
-                )
-            except Exception as e:
-                st.error(f"❌ Agent encountered an error: {str(e)}")
+    # Chat Input handler
+    if user_question := st.chat_input("Ask a follow-up question here..."):
+        if not GROQ_API_KEY or GROQ_API_KEY == "your-groq-key-here":
+            st.error("Please enter a valid Groq API key in the sidebar first.")
+        else:
+            st.session_state.messages.append({"role": "user", "content": user_question})
+            with st.chat_message("user"):
+                st.markdown(user_question)
+
+            # Format History
+            chat_history = ""
+            for m in st.session_state.messages[:-1]:
+                chat_history += f"{m['role'].capitalize()}: {m['content']}\n"
+
+            # Generate reply
+            with st.chat_message("assistant"):
+                with st.spinner("Consulting guidelines..."):
+                    from agent import run_chat
+                    reply = run_chat(
+                        user_question=user_question,
+                        chat_history=chat_history,
+                        patient_summary=patient_summary,
+                        risk_score=predicted_risk_score,
+                        prediction_label=prediction_label,
+                        groq_api_key=GROQ_API_KEY
+                    )
+                    st.markdown(reply)
+            
+            st.session_state.messages.append({"role": "assistant", "content": reply})
 
 st.markdown("---")
 st.caption("Powered by ML (Linear Regression + Decision Tree) & Agentic AI (LangGraph + Groq LLaMA3 + ChromaDB RAG)")
