@@ -29,20 +29,9 @@ if os.path.exists(_css_path):
     with open(_css_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# ── Groq API Key (from env or sidebar) ──────────────────────────────────────
+# ── Groq API Key (from env) ──────────────────────────────────────────────────
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-
 with st.sidebar:
-    st.markdown("## ⚙️ Configuration")
-    groq_key_input = st.text_input(
-        "Groq API Key",
-        value=GROQ_API_KEY,
-        type="password",
-        help="Enter your Groq API key. Get one free at console.groq.com"
-    )
-    if groq_key_input:
-        GROQ_API_KEY = groq_key_input
-
     st.markdown("---")
     st.markdown("### 📖 About")
     st.info(
@@ -183,8 +172,8 @@ if st.button("🔬 Analyze Diabetes Risk", use_container_width=True):
     health_report = ""
     chroma_ready = os.path.exists(os.path.join(_BASE_DIR, "chroma_db"))
 
-    if not GROQ_API_KEY or GROQ_API_KEY == "your-groq-key-here":
-        health_report = "❌ **Error**: Please enter a valid Groq API key in the sidebar to generate the AI health report."
+    if not GROQ_API_KEY or GROQ_API_KEY in ["your-groq-key-here", "your_groq_api_key_here"]:
+        health_report = "❌ **Error**: Groq API Key not found. Please add your key to the `.env` file in the root directory."
     else:
         if not chroma_ready:
             st.warning("⚠️ Vector database not found. Proceeding with agent using general knowledge.")
@@ -267,8 +256,8 @@ if st.session_state.analysis_complete:
 
     # Chat Input handler
     if user_question := st.chat_input("Ask a follow-up question here..."):
-        if not GROQ_API_KEY or GROQ_API_KEY == "your-groq-key-here":
-            st.error("Please enter a valid Groq API key in the sidebar first.")
+        if not GROQ_API_KEY or GROQ_API_KEY in ["your-groq-key-here", "your_groq_api_key_here"]:
+            st.error("Groq API Key not found. Please add your key to the `.env` file.")
         else:
             st.session_state.messages.append({"role": "user", "content": user_question})
             with st.chat_message("user"):
