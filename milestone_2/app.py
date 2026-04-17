@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Load .env file (gitignored) for local API keys
-load_dotenv(os.path.join(_BASE_DIR, "..", ".env"))
+env_path = os.path.join(_BASE_DIR, "..", ".env")
+load_dotenv(env_path, override=True)
 
 # Ensure the project folder is on the import path (so agent.py is always found)
 if _BASE_DIR not in sys.path:
