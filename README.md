@@ -1,90 +1,115 @@
-# Diabetes Prediction & Risk Analysis System
+# Agentic Diabetes Risk Assistant 🩺🤖
 
-A full-stack Machine Learning application designed to assess diabetes risk and provide a binary diagnosis based on clinical, demographic, and lifestyle indicators. The system utilizes a **two-stage hybrid model** deployed via a user-friendly Streamlit interface.
+A professional-grade, hybrid AI system that combines **Classic Machine Learning** with **Agentic RAG (Retrieval-Augmented Generation)** to provide highly accurate diabetes risk assessments and evidence-based health guidance.
 
-## Project Overview
+## 🌟 Project Overview
 
-This project aims to provide an accessible tool for early diabetes detection. It analyzes 24 distinct health metrics to output:
+This system evolves from a standard binary classifier into a sophisticated **Health Support Agent**. It operates in two primary phases:
+1.  **ML Risk Prediction Engine**: A two-stage pipeline (Linear Regression + Decision Tree) that analyzes 24 clinical parameters to calculate a precise risk score (0-100) and a diagnostic label.
+2.  **Agentic AI Reporting (RAG)**: A LangGraph-orchestrated workflow that retrieves localized medical guidelines from the **WHO** and **ICMR (Indian Council of Medical Research)** to generate personalized, medical-grade health reports.
 
-1.  **Diabetes Risk Score (0-100):** A continuous value representing the user's predisposition to diabetes.
-2.  **Diagnostic Prediction:** A binary classification (Diabetic / No Diabetes) with confidence intervals.
-
-The workflow begins with raw data processing in a Jupyter Notebook, training optimized regression and classification models, and deploying them through an interactive web dashboard.
-
-## Features
-
-- **Interactive Web Interface:** Built with Streamlit, featuring a glassmorphism design and tabbed input layout.
-- **Two-Stage Prediction Pipeline:**
-  - **Stage 1 (Regression):** Predicts a continuous Risk Score.
-  - **Stage 2 (Classification):** Uses the predicted Risk Score + original features to determine the final diagnosis.
-- **Comprehensive Metrics:** Analyzes BMI, HbA1c, Glucose levels, Cholesterol, Sleep patterns, and Lifestyle choices.
-- **Visual Feedback:** Color-coded risk indicators and confidence percentages.
-
-## System Architecture
+## 🏗️ System Architecture
 
 ```mermaid
 flowchart TD
-    %% Styling
-    classDef input fill:#e1f5fe,stroke:#3b82f6,stroke-width:2px,color:#000
-    classDef process fill:#f3e8ff,stroke:#8b5cf6,stroke-width:2px,color:#000
-    classDef model fill:#ffedd5,stroke:#a855f7,stroke-width:2px,color:#000
-    classDef output fill:#dcfce7,stroke:#f97316,stroke-width:2px,color:#000
+    subgraph Input_Layer ["1. Patient Input Layer"]
+        A[User Health Metrics<br/><small>Clinical, Lifestyle, Demo</small>]
+    end
 
-    %% Nodes
-    A[User Inputs\n<small>Demographics, Lifestyle, Clinical</small>]:::input
-    B[Preprocessing\n<small>Categorical Encoding & Imputation</small>]:::process
-    C[Standard Scaler\n<small>Normalizing 24 Features</small>]:::process
+    subgraph ML_Engine ["2. ML Risk Engine"]
+        B[StandardScaler<br/><small>Feature Normalization</small>]
+        C[Stage 1: Linear Regression<br/><small>Predicts Risk Score</small>]
+        D[Stage 2: Decision Tree<br/><small>Binary Diagnosis</small>]
+    end
 
-    D[Stage 1: Linear Regressor\n<small>Predicts Risk Score</small>]:::model
-    E[Post-processing\n<small>Clip Score 0-100</small>]:::process
-    F[Predicted Risk Score]:::output
+    subgraph RAG_Pipeline ["3. Knowledge Retrieval (RAG)"]
+        E[(ChromaDB<br/>Vector Store)]
+        F[WHO Global Guidelines]
+        G[ICMR India Guidelines]
+        H[Query Embedding<br/><small>HuggingFace MiniLM</small>]
+    end
 
-    G[Feature Combination\n<small>24 Scaled Features + Risk Score</small>]:::process
+    subgraph Agentic_Orchestration ["4. Agentic AI (LangGraph)"]
+        I[State Management]
+        J[Retrieval Node]
+        K[Reasoning & Generation Node<br/><small>Groq Llama-3.3-70B</small>]
+    end
 
-    H[Stage 2: Decision Tree Classifier\n<small>Binary Classification</small>]:::model
-    I[Final Diagnosis Prediction\n<small>Diabetic / Non-Diabetic</small>]:::output
+    subgraph Interaction_Layer ["5. User Interface"]
+        L[Streamlit Dashboard]
+        M[Personalized Health Report]
+        N[Conversational Chatbot<br/><small>Follow-up QA</small>]
+    end
 
     %% Connections
     A --> B
     B --> C
-    C --> D
-    D --> E
-    E --> F
-
-    C -- "24 Scaled Features" --> G
-    F -- "1 Appended Feature" --> G
-
-    G --> H
-    H --> I
+    C --> |Risk Score| D
+    D --> |Detection Label| I
+    
+    F & G --> |PDF Ingestion| E
+    
+    I --> J
+    J <--> |Similarity Search| E
+    J --> K
+    K --> |Structured Markdown| M
+    
+    M --> N
+    N <--> |History & Context| K
+    L <==> A & M & N
 ```
 
-### Breakdown of the Flow:
+## 🚀 Key Features
 
-1. **Inputs & Scaling**: The 24 clinical features from the user are gathered, encoded, and passed through the `StandardScaler` to ensure all numerical values exist on the same scale, a requirement for Linear Regression to perform well.
-2. **Stage 1 (Risk Scoring)**: The scaled features are fed into our first model, the **Linear Regressor**, which outputs a continuous value. We clip this value between 0 and 100 to generate the **Predicted Risk Score**.
-3. **Feature Combination**: We take the 24 scaled features and append the new `predicted_risk_score` to create a 25-feature array (or DataFrame).
-4. **Stage 2 (Diagnosis)**: This combined dataset is passed into the **Decision Tree Classifier**, which uses the heavily weighted risk score alongside the core clinical metrics to make the final binary prediction (Diagnosed or Not Diagnosed).
+- **Hybrid Prediction Pipeline**: Combines continuous risk scoring with discrete classification for a nuanced health perspective.
+- **Evidence-Based RAG**: Unlike generic LLMs, this agent grounds its advice in official **WHO** and **ICMR** documents, citing sources directly.
+- **Conversational Follow-ups**: A stateful chat interface allows users to ask clarifying questions about their report (e.g., "What does the ICMR say about my physical activity levels?").
+- **Localized Context**: Specifically tuned with ICMR guidelines for Asian-Indian phenotypic risk factors.
+- **Modern UI**: Implemented with glassmorphism aesthetics and responsive Streamlit components.
 
-## Confusion Matrix
+## 🛠️ Tech Stack
 
-![alt text](confusion_matrix.png)
+- **Orchestration**: LangGraph
+- **LLM Engine**: Groq (Llama-3.3-70B-Versatile)
+- **Vector Database**: ChromaDB
+- **Embeddings**: Sentence-Transformers (`all-MiniLM-L6-v2`)
+- **ML Frameworks**: Scikit-Learn, Pandas, NumPy
+- **Frontend**: Streamlit + Custom CSS
+- **Deployment**: Streamlit Community Cloud
 
-## Tech Stack
-
-- **Language:** Python 3.x
-- **Machine Learning:** Scikit-Learn (Linear Regression, Decision Tree Classifier)
-- **Data Manipulation:** Pandas, NumPy
-- **Visualization:** Matplotlib, Seaborn
-- **Deployment/UI:** Streamlit
-- **Styling:** Custom CSS
-- **Data Source:** Kaggle Hub API
-
-## Project Structure
+## 📂 Project Structure
 
 ```text
-├── app.py                         # Main Streamlit application entry point
-├── Diabetes_Risk.ipynb            # Model training, EDA, and evaluation notebook
-├── style.css                      # Custom CSS for UI styling
-├── diabetes_prediction_models.pkl # Serialized ML models and Scaler
-└── .gitignore                     # Git configuration
+├── data/                       # Raw clinical datasets
+├── models/                     # Serialized ML models (Joblib)
+├── milestone_1/                # ML Discovery & Local Prediction App
+│   ├── app.py                  # Initial ML dashboard
+│   └── style.css
+├── milestone_2/                # Agentic AI & RAG Implementation
+│   ├── app.py                  # Main Dashboard (Agentic/Chat)
+│   ├── agent.py                # LangGraph definition & Nodes
+│   ├── ingest.py               # Vector Database Ingestion script
+│   ├── knowledge/              # Official Medical PDFs (ICMR/WHO)
+│   ├── chroma_db/              # Persistent Vector Store
+│   └── style.css               # Dashboard styling
+├── requirements.txt            # System dependencies
+└── README.md
 ```
+
+## ⚙️ Fast Start
+
+1.  **Ingest Knowledge**:
+    ```bash
+    python milestone_2/ingest.py
+    ```
+2.  **Run Application**:
+    ```bash
+    streamlit run milestone_2/app.py
+    ```
+3.  **Deploy**:
+    - Push to GitHub.
+    - Connect to [share.streamlit.io](https://share.streamlit.io).
+    - Add `GROQ_API_KEY` to Streamlit Secrets.
+
+---
+*⚕️ **Disclaimer**: This tool is for informational and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.*
