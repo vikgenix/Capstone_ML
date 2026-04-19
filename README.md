@@ -96,20 +96,64 @@ flowchart TD
 └── README.md
 ```
 
-## ⚙️ Fast Start
+## ⚙️ Getting Started
 
-1.  **Ingest Knowledge**:
+Follow these steps to set up and run the project locally.
+
+### 1. Prerequisites
+- Python 3.9 or higher
+- A Groq Cloud account (for the LLM)
+
+### 2. Installation
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone <repository-url>
+    cd Capstone_ML
+    ```
+
+2.  **Create a Virtual Environment**:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+
+3.  **Install Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### 3. Configuration
+
+1.  **Environment Variables**:
+    Create a `.env` file in the root directory and add your Groq API key:
+    ```bash
+    ```
+    Edit `.env` and fill in your key:
+    ```text
+    GROQ_API_KEY=your_groq_api_key_here
+    ```
+    *You can get your API key from the [Groq Console](https://console.groq.com/keys).*
+
+### 4. Running the Application
+
+1.  **Ingest Medical Knowledge (First-time setup)**:
+    This script converts the medical PDFs in `milestone_2/knowledge/` into a vector database.
     ```bash
     python milestone_2/ingest.py
     ```
-2.  **Run Application**:
+
+2.  **Launch the Dashboard**:
     ```bash
     streamlit run milestone_2/app.py
     ```
-3.  **Deploy**:
-    - Push to GitHub.
-    - Connect to [share.streamlit.io](https://share.streamlit.io).
-    - Add `GROQ_API_KEY` to Streamlit Secrets.
+
+## 🧪 Deployment
+
+To deploy to **Streamlit Community Cloud**:
+1.  Push your code to GitHub.
+2.  Connect your repository to [share.streamlit.io](https://share.streamlit.io).
+3.  In the Streamlit app settings, add `GROQ_API_KEY` under **Secrets**.
 
 ---
 *⚕️ **Disclaimer**: This tool is for informational and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.*
