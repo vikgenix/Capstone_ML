@@ -148,12 +148,5 @@ Follow these steps to set up and run the project locally.
     streamlit run milestone_2/app.py
     ```
 
-## 🧪 Deployment
-
-To deploy to **Streamlit Community Cloud**:
-1.  Push your code to GitHub.
-2.  Connect your repository to [share.streamlit.io](https://share.streamlit.io).
-3.  In the Streamlit app settings, add `GROQ_API_KEY` under **Secrets**.
-
 ---
 *⚕️ **Disclaimer**: This tool is for informational and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.*
