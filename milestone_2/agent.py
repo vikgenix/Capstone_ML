@@ -13,7 +13,7 @@ from langgraph.graph import StateGraph, END
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHROMA_DB_PATH = os.path.join(_BASE_DIR, "chroma_db")
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-LLM_MODEL = "llama-3.3-70b-versatile"
+LLM_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 
 # === Agent State ===
 class HealthAgentState(TypedDict):
